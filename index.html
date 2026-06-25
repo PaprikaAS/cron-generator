@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cron Expression Generator - Free Online Cron Tab Generator | Cron表达式生成器</title>
+    <meta name="description" content="Free online Cron expression generator. Visually build cron schedules for Linux, Spring Boot, Node.js, Python. Supports seconds, minutes, hours, day, month, week. Cron表达式在线生成工具，支持Spring定时任务、Linux crontab。">
+    <meta name="keywords" content="cron expression generator, cron tab, cron schedule, spring cron, linux crontab, cron表达式生成器, 定时任务, spring定时任务">
+    <link rel="canonical" href="https://cron-generator.com/">
+    <style>
+        :root {
+            --bg: #f8f9fc;
+            --card-bg: #ffffff;
+            --text: #1a1a2e;
+            --text-secondary: #6b7280;
+            --border: #e5e7eb;
+            --primary: #6366f1;
+            --primary-light: #eef2ff;
+            --accent: #10b981;
+            --accent-light: #ecfdf5;
+            --danger: #ef4444;
+            --danger-light: #fef2f2;
+            --radius: 10px;
+            --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+        }
+        [data-theme="dark"] {
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --border: #334155;
+            --primary: #818cf8;
+            --primary-light: #1e1b4b;
+            --accent: #34d399;
+            --accent-light: #064e3b;
+            --danger: #f87171;
+            --danger-light: #450a0a;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px 16px 60px;
+        }
+        header {
+            text-align: center;
+            padding: 32px 0 24px;
+        }
+        header h1 {
+            font-size: 26px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+        header p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        .theme-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 1px solid var(--border);
+            background: var(--card-bg);
+            cursor: pointer;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text);
+        }
+        .lang-toggle {
+            position: absolute;
+            top: 20px;
+            right: 72px;
+            padding: 8px 14px;
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            background: var(--card-bg);
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text);
+        }
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 20px 24px;
+            margin-bottom: 16px;
+        }
+        .result-bar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: var(--card-bg);
+            border: 2px solid var(--primary);
+            border-radius: var(--radius);
+            padding: 14px 18px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+        .cron-expr {
+            flex: 1;
+            font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+            font-size: 18px;
+            font-weight: 500;
+            letter-spacing: 1px;
+            min-width: 200px;
+        }
+        .btn {
+            padding: 8px 18px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: var(--card-bg);
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text);
+            transition: all 0.15s;
+            white-space: nowrap;
+        }
+        .btn:hover { border-color: var(--primary); background: var(--primary-light); }
+        .btn-primary {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--primary);
+        }
+        .btn-primary:hover { opacity: 0.9; background: var(--primary); }
+        .desc-text {
+            font-size: 13px;
+            color: var(--text-secondary);
+            padding: 6px 0;
+            min-height: 24px;
+        }
+        .field-row {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 14px 0;
+            border-bottom: 1px solid var(--border);
+            flex-wrap: wrap;
+        }
+        .field-row:last-child { border-bottom: none; }
+        .field-label {
+            font-size: 14px;
+            font-weight: 600;
+            width: 60px;
+            flex-shrink: 0;
+        }
+        .field-range {
+            font-size: 12px;
+            color: var(--text-secondary);
+            width: 90px;
+            flex-shrink: 0;
+        }
+        select, input[type="text"], input[type="number"] {
+            padding: 6px 10px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background: var(--card-bg);
+            color: var(--text);
+            font-size: 13px;
+            font-family: inherit;
+        }
+        select:focus, input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px var(--primary-light);
+        }
+        .input-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .input-group input[type="number"] { width: 60px; }
+        .sep { color: var(--text-secondary); font-size: 13px; }
+        .preset-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 10px;
+        }
+        .preset-item {
+            padding: 12px 16px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.15s;
+            font-size: 13px;
+        }
+        .preset-item:hover {
+            border-color: var(--primary);
+            background: var(--primary-light);
+        }
+        .preset-item .expr {
+            font-family: 'SF Mono', 'Consolas', monospace;
+            font-weight: 500;
+            margin-bottom: 2px;
+        }
+        .preset-item .desc {
+            color: var(--text-secondary);
+            font-size: 12px;
+        }
+        .next-runs {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 8px;
+        }
+        .next-run-tag {
+            font-size: 12px;
+            padding: 4px 10px;
+            background: var(--accent-light);
+            color: var(--accent);
+            border-radius: 12px;
+            font-family: 'SF Mono', 'Consolas', monospace;
+        }
+        .tags { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px; }
+        .tag {
+            font-size: 11px;
+            padding: 3px 10px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+        }
+        .footer-note {
+            text-align: center;
+            font-size: 12px;
+            color: var(--text-secondary);
+            padding: 24px 0 40px;
+        }
+        .copied-toast {
+            position: fixed;
+            top: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--primary);
+            color: #fff;
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        .copied-toast.show { opacity: 1; }
+        @media (max-width: 640px) {
+            .field-row { gap: 8px; padding: 10px 0; }
+            .field-label { width: 100%; margin-bottom: 4px; }
+            .field-range { width: 100%; margin-bottom: 4px; }
+            .container { padding: 12px 10px 40px; }
+            header h1 { font-size: 22px; }
+            .card { padding: 14px 16px; }
+        }
+    </style>
+</head>
+<body>
+    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle dark mode">🌓</button>
+    <button class="lang-toggle" onclick="toggleLang()" id="langBtn">EN</button>
+    <div class="copied-toast" id="toast">Copied!</div>
+
+    <div class="container">
+        <header>
+            <h1 data-zh="Cron 表达式生成器" data-en="Cron Expression Generator">Cron 表达式生成器</h1>
+            <p data-zh="可视化生成 Cron 定时任务表达式，支持 Spring Boot / Linux Crontab / Node.js / Python" data-en="Visually build cron expressions for Spring Boot, Linux, Node.js, Python">可视化生成 Cron 定时任务表达式，支持 Spring Boot / Linux Crontab / Node.js / Python</p>
+        </header>
+
+        <div class="result-bar">
+            <span class="cron-expr" id="cronDisplay">* * * * * *</span>
+            <button class="btn btn-primary" onclick="copyCron()" data-zh="复制" data-en="Copy">复制</button>
+        </div>
+
+        <p class="desc-text" id="humanDesc">每秒执行</p>
+
+        <div class="card">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+                <span style="font-weight:600;font-size:15px;" data-zh="下次执行时间" data-en="Next Executions">下次执行时间</span>
+            </div>
+            <div class="next-runs" id="nextRuns"></div>
+        </div>
+
+        <div class="card">
+            <!-- Seconds -->
+            <div class="field-row">
+                <span class="field-label">Seconds</span>
+                <span class="field-range">0-59</span>
+                <select onchange="onTypeChange('second')" id="sel-second">
+                    <option value="every" data-zh="每秒" data-en="Every second">每秒</option>
+                    <option value="specific" data-zh="指定秒" data-en="Specific">指定秒</option>
+                    <option value="range" data-zh="范围" data-en="Range">范围</option>
+                    <option value="step" data-zh="间隔" data-en="Step">间隔</option>
+                    <option value="list" data-zh="多值" data-en="List">多值</option>
+                </select>
+                <span class="input-group" id="input-second"></span>
+            </div>
+            <!-- Minutes -->
+            <div class="field-row">
+                <span class="field-label">Minutes</span>
+                <span class="field-range">0-59</span>
+                <select onchange="onTypeChange('minute')" id="sel-minute">
+                    <option value="every" data-zh="每分钟" data-en="Every minute">每分钟</option>
+                    <option value="specific" data-zh="指定分" data-en="Specific">指定分</option>
+                    <option value="range" data-zh="范围" data-en="Range">范围</option>
+                    <option value="step" data-zh="间隔" data-en="Step">间隔</option>
+                    <option value="list" data-zh="多值" data-en="List">多值</option>
+                </select>
+                <span class="input-group" id="input-minute"></span>
+            </div>
+            <!-- Hours -->
+            <div class="field-row">
+                <span class="field-label">Hours</span>
+                <span class="field-range">0-23</span>
+                <select onchange="onTypeChange('hour')" id="sel-hour">
+                    <option value="every" data-zh="每小时" data-en="Every hour">每小时</option>
+                    <option value="specific" data-zh="指定时" data-en="Specific">指定时</option>
+                    <option value="range" data-zh="范围" data-en="Range">范围</option>
+                    <option value="step" data-zh="间隔" data-en="Step">间隔</option>
+                    <option value="list" data-zh="多值" data-en="List">多值</option>
+                </select>
+                <span class="input-group" id="input-hour"></span>
+            </div>
+            <!-- Day -->
+            <div class="field-row">
+                <span class="field-label">Day</span>
+                <span class="field-range">1-31</span>
+                <select onchange="onTypeChange('day')" id="sel-day">
+                    <option value="every" data-zh="每天" data-en="Every day">每天</option>
+                    <option value="specific" data-zh="指定日" data-en="Specific">指定日</option>
+                    <option value="range" data-zh="范围" data-en="Range">范围</option>
+                    <option value="step" data-zh="间隔" data-en="Step">间隔</option>
+                    <option value="list" data-zh="多值" data-en="List">多值</option>
+                </select>
+                <span class="input-group" id="input-day"></span>
+            </div>
+            <!-- Month -->
+            <div class="field-row">
+                <span class="field-label">Month</span>
+                <span class="field-range">1-12</span>
+                <select onchange="onTypeChange('month')" id="sel-month">
+                    <option value="every" data-zh="每月" data-en="Every month">每月</option>
+                    <option value="specific" data-zh="指定月" data-en="Specific">指定月</option>
+                    <option value="range" data-zh="范围" data-en="Range">范围</option>
+                    <option value="step" data-zh="间隔" data-en="Step">间隔</option>
+                    <option value="list" data-zh="多值" data-en="List">多值</option>
+                </select>
+                <span class="input-group" id="input-month"></span>
+            </div>
+            <!-- Week -->
+            <div class="field-row">
+                <span class="field-label">Week</span>
+                <span class="field-range">0-6</span>
+                <select onchange="onTypeChange('week')" id="sel-week">
+                    <option value="every" data-zh="每周" data-en="Every week">每周</option>
+                    <option value="specific" data-zh="指定周" data-en="Specific">指定周</option>
+                    <option value="range" data-zh="范围" data-en="Range">范围</option>
+                    <option value="step" data-zh="间隔" data-en="Step">间隔</option>
+                    <option value="list" data-zh="多值" data-en="List">多值</option>
+                </select>
+                <span class="input-group" id="input-week"></span>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3 style="font-size:15px;font-weight:600;margin-bottom:14px;" data-zh="常用预设" data-en="Common Presets">常用预设</h3>
+            <div class="preset-grid">
+                <div class="preset-item" onclick="applyPreset('0 * * * * *', '每分钟执行一次')">
+                    <div class="expr">0 * * * * *</div>
+                    <div class="desc" data-zh="每分钟执行一次" data-en="Every minute">每分钟执行一次</div>
+                </div>
+                <div class="preset-item" onclick="applyPreset('0 0 * * * *', '每整点执行')">
+                    <div class="expr">0 0 * * * *</div>
+                    <div class="desc" data-zh="每整点执行一次" data-en="Every hour">每整点执行一次</div>
+                </div>
+                <div class="preset-item" onclick="applyPreset('0 0 0 * * *', '每天零点执行')">
+                    <div class="expr">0 0 0 * * *</div>
+                    <div class="desc" data-zh="每天零点执行" data-en="Every day at midnight">每天零点执行</div>
+                </div>
+                <div class="preset-item" onclick="applyPreset('0 30 9 * * 1-5', '每周一至五 9:30')">
+                    <div class="expr">0 30 9 * * 1-5</div>
+                    <div class="desc" data-zh="工作日早上 9:30" data-en="Weekdays at 9:30 AM">工作日早上 9:30</div>
+                </div>
+                <div class="preset-item" onclick="applyPreset('0 0 2 * * 1', '每周一凌晨2点')">
+                    <div class="expr">0 0 2 * * 1</div>
+                    <div class="desc" data-zh="每周一凌晨 2:00" data-en="Every Monday at 2 AM">每周一凌晨 2:00</div>
+                </div>
+                <div class="preset-item" onclick="applyPreset('0 0/5 * * * *', '每5分钟')">
+                    <div class="expr">0 0/5 * * * *</div>
+                    <div class="desc" data-zh="每 5 分钟执行一次" data-en="Every 5 minutes">每 5 分钟执行一次</div>
+                </div>
+                <div class="preset-item" onclick="applyPreset('0 0 12 1 * *', '每月1号中午')">
+                    <div class="expr">0 0 12 1 * *</div>
+                    <div class="desc" data-zh="每月 1 号中午 12:00" data-en="1st of every month at noon">每月 1 号中午 12:00</div>
+                </div>
+                <div class="preset-item" onclick="applyPreset('0 0 9-18 * * 1-5', '工作日9-18点整点')">
+                    <div class="expr">0 0 9-18 * * 1-5</div>
+                    <div class="desc" data-zh="工作日 9:00-18:00 每小时" data-en="Weekdays 9AM-6PM hourly">工作日 9:00-18:00 每小时</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tags">
+            <span class="tag">Spring Boot @Scheduled</span>
+            <span class="tag">Linux crontab</span>
+            <span class="tag">Node.js node-cron</span>
+            <span class="tag">Python schedule</span>
+            <span class="tag">Quartz</span>
+            <span class="tag">AWS CloudWatch</span>
+        </div>
+
+        <div class="footer-note" data-zh="支持 7 位和 6 位格式 · 秒级精度 · 实时中文说明 · 下一次执行时间预览" data-en="Supports 7-field and 6-field format · Second precision · Real-time description · Next run preview">支持 7 位和 6 位格式 · 秒级精度 · 实时中文说明 · 下一次执行时间预览</div>
+    </div>
+
+    <script>
+        let lang = 'zh';
+        const tpl = { second: '*', minute: '*', hour: '*', day: '*', month: '*', week: '*' };
+        const tplTypes = { second: 'every', minute: 'every', hour: 'every', day: 'every', month: 'every', week: 'every' };
+        const fields = ['second','minute','hour','day','month','week'];
+        const ranges = { second: [0,59], minute: [0,59], hour: [0,23], day: [1,31], month: [1,12], week: [0,6] };
+        const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+        const WEEKS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+        const MONTHS_ZH = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+        const WEEKS_ZH = ['周日','周一','周二','周三','周四','周五','周六'];
+
+        function renderInput(field) {
+            const t = tplTypes[field];
+            const r = ranges[field];
+            const id = 'input-' + field;
+            const el = document.getElementById(id);
+            let html = '';
+            if (t === 'every') {
+                html = '<span style="color:var(--text-secondary);font-size:13px" class="every-text">*</span>';
+            } else if (t === 'specific') {
+                html = `<input type="number" min="${r[0]}" max="${r[1]}" value="${r[0]}" oninput="updateField('${field}',this.value)" data-field="${field}" class="specific-val">`;
+            } else if (t === 'range') {
+                html = `<input type="number" min="${r[0]}" max="${r[1]}" value="${r[0]}" oninput="updateAll()" data-field="${field}" data-type="range-from" style="width:55px"> <span class="sep">-</span> <input type="number" min="${r[0]}" max="${r[1]}" value="${Math.min(r[1],r[0]+1)}" oninput="updateAll()" data-field="${field}" data-type="range-to" style="width:55px">`;
+            } else if (t === 'step') {
+                html = `<input type="number" min="${r[0]}" max="${r[1]}" value="${r[0]}" oninput="updateAll()" data-field="${field}" data-type="step-from" style="width:55px"> <span class="sep">/</span> <input type="number" min="1" max="60" value="1" oninput="updateAll()" data-field="${field}" data-type="step-val" style="width:55px">`;
+            } else if (t === 'list') {
+                html = `<input type="text" value="" placeholder="如: 1,15,30" oninput="updateField('${field}',this.value)" data-field="${field}" class="list-val" style="width:140px">`;
+            }
+            el.innerHTML = html;
+        }
+
+        function updateField(field, val) {
+            if (tplTypes[field] === 'specific') tpl[field] = val;
+            else if (tplTypes[field] === 'list') tpl[field] = val || '*';
+            updateAll();
+        }
+
+        function updateAll() {
+            for (const f of fields) {
+                const t = tplTypes[f];
+                const el = document.getElementById('input-' + f);
+                if (t === 'every') tpl[f] = '*';
+                else if (t === 'specific') {
+                    const v = el.querySelector('.specific-val');
+                    tpl[f] = v ? v.value : '0';
+                } else if (t === 'range') {
+                    const from = el.querySelector('[data-type="range-from"]');
+                    const to = el.querySelector('[data-type="range-to"]');
+                    tpl[f] = `${from.value}-${to.value}`;
+                } else if (t === 'step') {
+                    const from = el.querySelector('[data-type="step-from"]');
+                    const step = el.querySelector('[data-type="step-val"]');
+                    tpl[f] = `${from.value}/${step.value}`;
+                } else if (t === 'list') {
+                    const v = el.querySelector('.list-val');
+                    tpl[f] = v.value || '*';
+                }
+            }
+            display();
+        }
+
+        function onTypeChange(field) {
+            const sel = document.getElementById('sel-' + field);
+            tplTypes[field] = sel.value;
+            renderInput(field);
+            updateAll();
+        }
+
+        function getCronExpr() {
+            const vals = fields.map(f => tpl[f]);
+            return vals.join(' ');
+        }
+
+        function describe(field, val, zh) {
+            const r = ranges[field];
+            if (val === '*') {
+                const map = { second: zh?'每秒':'every second', minute: zh?'每分钟':'every minute', hour: zh?'每小时':'every hour', day: zh?'每天':'every day', month: zh?'每月':'every month', week: zh?'每周':'every week' };
+                return map[field];
+            }
+            if (val.includes('-')) {
+                const [a,b] = val.split('-');
+                if (field === 'week') return zh ? `${WEEKS_ZH[a]}到${WEEKS_ZH[b]}` : `from ${WEEKS[a]} to ${WEEKS[b]}`;
+                if (field === 'month') return zh ? `${a}月-${b}月` : `${MONTHS[a-1]}-${MONTHS[b-1]}`;
+                return zh ? `${a}到${b}` : `from ${a} to ${b}`;
+            }
+            if (val.includes('/')) {
+                const [base,step] = val.split('/');
+                const baseText = base === '0' ? (zh ? '从0开始' : 'starting at 0') : (zh ? `从${base}开始` : `starting at ${base}`);
+                return zh ? `${baseText}每${step}${field==='second'?'秒':field==='minute'?'分':field==='hour'?'时':field==='day'?'天':field==='month'?'月':'周'}` : `${baseText} every ${step}`;
+            }
+            if (val.includes(',')) {
+                const parts = val.split(',');
+                if (field === 'week') {
+                    const names = parts.map(p => zh ? WEEKS_ZH[p] : WEEKS[p]).join(zh?'、':', ');
+                    return zh ? `${names}` : `on ${names}`;
+                }
+                if (field === 'month') {
+                    const names = parts.map(p => zh ? `${p}月` : MONTHS[p-1]).join(zh?'、':', ');
+                    return zh ? `${names}` : `in ${names}`;
+                }
+                return zh ? `第${val}${field==='second'?'秒':field==='minute'?'分':field==='hour'?'时':field==='day'?'天':''}` : `at ${val}`;
+            }
+            if (field === 'week') return zh ? `${WEEKS_ZH[val]}` : `on ${WEEKS[val]}`;
+            if (field === 'month') return zh ? `${val}月` : `in ${MONTHS[val-1]}`;
+            const unit = { second: zh?'秒':'second', minute: zh?'分':'minute', hour: zh?'时':'hour', day: zh?'号':'th' };
+            if (field === 'day') return zh ? `${val}号` : `${val}${unit[field]}`;
+            return zh ? `第${val}${unit[field]}` : `at ${val} ${unit[field]}`;
+        }
+
+        function humanReadable(zh) {
+            if (!zh) return humanReadableEn();
+            return humanReadableZh();
+        }
+
+        function humanReadableEn() {
+            const expr = getCronExpr();
+            const [sExp, mExp, hExp, dExp, moExp, wExp] = expr.split(' ');
+            let desc = 'Every';
+            const timeStrs = [];
+            if (sExp !== '*') timeStrs.push(describe('second', sExp, false));
+            if (mExp !== '*') timeStrs.push(describe('minute', mExp, false));
+            if (hExp !== '*') timeStrs.push(describe('hour', hExp, false));
+            if (timeStrs.length) desc += ' ' + timeStrs.join(', ');
+            else desc += ' day';
+            let dateStrs = [];
+            if (dExp !== '*' && wExp === '*') dateStrs.push(describe('day', dExp, false));
+            if (wExp !== '*') dateStrs.push(describe('week', wExp, false));
+            if (moExp !== '*') dateStrs.push(describe('month', moExp, false));
+            if (dateStrs.length) desc += ' on ' + dateStrs.join(', ');
+            return desc;
+        }
+
+        function humanReadableZh() {
+            const [s, m, h, d, mo, w] = [tpl.second, tpl.minute, tpl.hour, tpl.day, tpl.month, tpl.week];
+
+            var sAny = s === '*', mAny = m === '*', hAny = h === '*';
+            var dAny = d === '*', moAny = mo === '*', wAny = w === '*';
+
+            function p2(n) { return String(n).padStart(2, '0'); }
+
+            if (sAny && mAny && hAny && dAny && moAny && wAny) return '每秒执行';
+
+            var timeStr = '';
+            var dateStr = '';
+
+            if (s === '0' && m === '*' && h === '*') {
+                timeStr = '每分钟';
+            } else if (s === '0' && m === '0' && h === '*') {
+                timeStr = '每整点';
+            } else if (s === '0' && m === '0' && !hAny && !h.includes('-') && !h.includes('/') && !h.includes(',')) {
+                timeStr = p2(parseInt(h)) + ':00';
+            } else if (s === '0' && !mAny && !m.includes('-') && !m.includes('/') && !m.includes(',')
+                && !hAny && !h.includes('-') && !h.includes('/') && !h.includes(',')) {
+                timeStr = p2(parseInt(h)) + ':' + p2(parseInt(m));
+            } else if (s === '0' && m === '0' && h.includes('-') && !h.includes('/')) {
+                var hr = h.split('-');
+                timeStr = hr[0] + ':00 到 ' + hr[1] + ':00 每小时';
+            } else if (s === '0' && m.includes('/') && h === '*') {
+                timeStr = '每' + m.split('/')[1] + '分钟';
+            } else if (s === '0' && !mAny && !hAny && h.includes('/')) {
+                timeStr = '第' + m + '分，每' + h.split('/')[1] + '小时';
+            } else {
+                var tp = [];
+                if (!sAny) tp.push('第' + s + '秒');
+                if (!mAny) tp.push('第' + m + '分');
+                if (!hAny) tp.push('第' + h + '时');
+                timeStr = tp.join('的');
+            }
+
+            if (!dAny && wAny) {
+                dateStr = (moAny ? '每月' : '') + describe('day', d, true);
+            }
+            if (!wAny) {
+                dateStr = describe('week', w, true);
+            }
+            if (!moAny && !wAny) {
+                dateStr = describe('month', mo, true) + dateStr;
+            } else if (!moAny && wAny) {
+                dateStr = describe('month', mo, true) + dateStr;
+            }
+
+            var result = '';
+            if (dAny && wAny && moAny && timeStr && timeStr !== '每秒' && !timeStr.startsWith('每')) {
+                result = '每天 ' + timeStr;
+            } else if (dateStr && timeStr) {
+                result = dateStr + ' ' + timeStr;
+            } else if (timeStr) {
+                result = timeStr;
+            } else if (dateStr) {
+                result = dateStr;
+            }
+            if (result && !result.endsWith('执行')) result += '执行';
+            return result || '每秒执行';
+        }
+
+        function getNextRuns(count) {
+            count = count || 5;
+            const expr = getCronExpr();
+            const results = [];
+            const now = new Date();
+            now.setSeconds(now.getSeconds() + 1, 0);
+            let attempts = 0;
+            const maxAttempts = 366 * 24 * 60 * 60;
+            const [sExp, mExp, hExp, dExp, moExp, wExp] = expr.split(' ');
+            function matches(val, exp, max) {
+                if (exp === '*') return true;
+                if (exp.includes(',')) return exp.split(',').some(p => matches(val, p, max));
+                if (exp.includes('/')) {
+                    const [base, step] = exp.split('/');
+                    const start = parseInt(base);
+                    const st = parseInt(step);
+                    if (start === 0) return val % st === 0;
+                    return val >= start && (val - start) % st === 0;
+                }
+                if (exp.includes('-')) {
+                    const [lo, hi] = exp.split('-').map(Number);
+                    return val >= lo && val <= hi;
+                }
+                return parseInt(exp) === val;
+            }
+            let t = new Date(now);
+            while (results.length < count && attempts < maxAttempts) {
+                attempts++;
+                t.setSeconds(t.getSeconds() + 1);
+                const s = t.getSeconds();
+                const m = t.getMinutes();
+                const h = t.getHours();
+                const d = t.getDate();
+                const mo = t.getMonth() + 1;
+                const w = t.getDay();
+                if (matches(s, sExp, 59) && matches(m, mExp, 59) && matches(h, hExp, 23)
+                    && matches(d, dExp, 31) && matches(mo, moExp, 12) && matches(w, wExp, 6)) {
+                    const dayMatch = dExp === '*' || matches(d, dExp, 31);
+                    const weekMatch = wExp === '*' || matches(w, wExp, 6);
+                    if ((dExp !== '*' && wExp !== '*') ? (dayMatch || weekMatch) : dayMatch && weekMatch) {
+                        results.push(new Date(t));
+                        if (results.length >= count) break;
+                    }
+                }
+            }
+            return results;
+        }
+
+        function display() {
+            const expr = getCronExpr();
+            document.getElementById('cronDisplay').textContent = expr;
+            document.getElementById('humanDesc').textContent = humanReadable(lang === 'zh');
+            const runs = getNextRuns(5);
+            const runsDiv = document.getElementById('nextRuns');
+            runsDiv.innerHTML = runs.map(r => {
+                const pad = n => String(n).padStart(2, '0');
+                const local = r.getFullYear() + '-' + pad(r.getMonth()+1) + '-' + pad(r.getDate()) + ' '
+                    + pad(r.getHours()) + ':' + pad(r.getMinutes()) + ':' + pad(r.getSeconds());
+                return `<span class="next-run-tag">${local}</span>`;
+            }).join('');
+            updateLangUI();
+        }
+
+        function applyPreset(expr, desc) {
+            const parts = expr.split(' ');
+            const names = ['second','minute','hour','day','month','week'];
+            for (let i = 0; i < 6; i++) {
+                const v = parts[i] || '*';
+                tpl[names[i]] = v;
+                if (v === '*') tplTypes[names[i]] = 'every';
+                else if (v.includes('-')) tplTypes[names[i]] = 'range';
+                else if (v.includes('/')) tplTypes[names[i]] = 'step';
+                else if (v.includes(',')) tplTypes[names[i]] = 'list';
+                else tplTypes[names[i]] = 'specific';
+            }
+            for (const f of fields) {
+                document.getElementById('sel-' + f).value = tplTypes[f];
+                renderInput(f);
+                const el = document.getElementById('input-' + f);
+                const t = tplTypes[f];
+                if (t === 'specific') { const c = el.querySelector('.specific-val'); if (c) c.value = tpl[f]; }
+                if (t === 'range') {
+                    const p = tpl[f].split('-');
+                    const from = el.querySelector('[data-type="range-from"]'); if (from) from.value = p[0];
+                    const to = el.querySelector('[data-type="range-to"]'); if (to) to.value = p[1];
+                }
+                if (t === 'step') {
+                    const p = tpl[f].split('/');
+                    const from = el.querySelector('[data-type="step-from"]'); if (from) from.value = p[0];
+                    const step = el.querySelector('[data-type="step-val"]'); if (step) step.value = p[1];
+                }
+                if (t === 'list') { const c = el.querySelector('.list-val'); if (c) c.value = tpl[f]; }
+            }
+            display();
+        }
+
+        function copyCron() {
+            const expr = getCronExpr();
+            navigator.clipboard.writeText(expr).then(() => {
+                const toast = document.getElementById('toast');
+                toast.textContent = lang === 'zh' ? '已复制!' : 'Copied!';
+                toast.classList.add('show');
+                setTimeout(() => toast.classList.remove('show'), 2000);
+            });
+        }
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            html.dataset.theme = html.dataset.theme === 'dark' ? 'light' : 'dark';
+        }
+
+        function toggleLang() {
+            lang = lang === 'zh' ? 'en' : 'zh';
+            document.getElementById('langBtn').textContent = lang === 'zh' ? 'EN' : '中文';
+            updateLangUI();
+            display();
+        }
+
+        function updateLangUI() {
+            document.querySelectorAll('[data-zh]').forEach(el => {
+                const text = lang === 'zh' ? el.dataset.zh : el.dataset.en;
+                if (el.tagName === 'OPTION') {
+                    if (el.selected) {
+                        const sel = el.parentElement;
+                        const selId = sel.id;
+                        if (selId && selId.startsWith('sel-')) {
+                        }
+                    }
+                }
+                if (el.tagName === 'INPUT' || el.tagName === 'SELECT') return;
+                el.textContent = text;
+            });
+            document.querySelectorAll('select[id^="sel-"] option[data-zh]').forEach(opt => {
+                opt.textContent = lang === 'zh' ? opt.dataset.zh : opt.dataset.en;
+            });
+        }
+
+        function init() {
+            for (const f of fields) renderInput(f);
+            display();
+        }
+        init();
+    </script>
+</body>
+</html>
